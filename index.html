@@ -24,17 +24,24 @@
     margin-bottom: 15px;
     gap: 10px;
   }
-  button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-    background: #555;
-    color: #fff;
-  }
+button {
+    width: 220px;
+    height: 50px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  background: #555;
+  color: #fff;
+  text-align: center;
+
+  display: block;
+  margin: 15px auto; /* ⭐ das zentriert */
+}
+
   button:hover { background: #666; transform: translateY(-2px); }
   .btn-red { background: #CC0000; }
   input, select, textarea {
@@ -112,6 +119,15 @@
 </style>
 </head>
 <body>
+<body>
+
+
+<div id="notes-display" style="display:none;">
+ 
+  <h3 style="text-align:center; color:#FFD700; margin-bottom:10px;">
+    📝 بخش یادداشت‌ها
+  </h3>
+</div>
 
 <h1>🏰 امپراتوری کوشان</h1>
  <hr>
@@ -154,7 +170,7 @@
   <button onclick="hideAdminNoteSection()">انصراف</button>
 </div>
 
-<div id="notes-display" style="display:none;"></div>
+
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -189,8 +205,8 @@ const noteFromInput = document.getElementById("note-from");
 const noteToInput = document.getElementById("note-to");
 const notesDisplayDiv = document.getElementById("notes-display");
 
-// Abteilungen (nur kushan1)
-let sections = { kushan1: { password: "12345" } };
+// Abteilungen (nur kushan)
+let sections = { kushan: { password: "12345" } };
 
 // Render Abteilungen
 function renderSectionButtons() {
@@ -204,7 +220,7 @@ function renderSectionButtons() {
 function renderMenuButtons() {
   let html = `
     <button onclick="neueDaten()">➕ افزودن داده جدید</button>
-    <button onclick="datenAnzeigen()">📂 مشاهده داده‌ها</button>
+    <button onclick="()">📂 مشاهده داده‌ها</button>
     <button onclick="adminLogin()">🔑 ورود مدیر</button>
     <button onclick="showAdminNoteSection()">📝 مدیریت یادداشت‌ها</button>
   `;
@@ -270,7 +286,6 @@ function speichern() {
   reader.readAsDataURL(bild);
 }
 
-// Daten anzeigen
 function datenAnzeigen() {
   if(!currentSection){ inhalt.innerHTML=""; return; }
   adminNoteSection.style.display="none"; notesDisplayDiv.style.display="none"; searchSortDiv.style.display="flex";
@@ -285,24 +300,56 @@ function datenAnzeigen() {
     const datenArray = Object.keys(daten).map(key=>({key,...daten[key]}));
     datenArray.sort((a,b)=> sortOrder==="newest"? new Date(b.zeit)-new Date(a.zeit): new Date(a.zeit)-new Date(b.zeit));
 
-    let found=false;
-    datenArray.forEach(e=>{
-      if(e.attacker.toLowerCase().includes(searchValue)||e.target.toLowerCase().includes(searchValue)||e.alliance.toLowerCase().includes(searchValue)){
-        found=true;
+    let found = false;
+
+    datenArray.forEach(e => {
+      if (
+        e.attacker.toLowerCase().includes(searchValue) ||
+        e.target.toLowerCase().includes(searchValue) ||
+        e.alliance.toLowerCase().includes(searchValue)
+      ) {
+        found = true;
+// Text, der geteilt werden soll
+let shareText = 
+  `Angriff:\n` +
+  `Angreifer: ${e.attacker}\n` +
+  `Ziel: ${e.target}\n` +
+  `Allianz: ${e.alliance}\n` +
+  `${e.zeit}`;
+
+        // Link zur Attacke erstellen
+       const attackLink = `${window.location.origin}${window.location.pathname}?section=${currentSection}&key=${e.key}`;
+
+
+        // Text, der geteilt werden soll
         let html = `<div class="entry">
-          <strong>چه کسی حمله کرد؟</strong>: ${e.attacker}<br>
-          <strong>به چه کسی حمله شد؟</strong>: ${e.target}<br>
-          <strong>کدام اتحاد</strong>: ${e.alliance}<br>
-          <small>${e.zeit}</small><br>
-          <img src="${e.bild}" alt="Attack Image"><br>`;
-        if(isAdmin) html+=`<button class="btn-red" onclick="deleteEntry('${e.key}')">حذف</button>`;
-        html+="</div>";
-        inhalt.innerHTML+=html;
+  <strong>چه کسی حمله کرد؟</strong>: ${e.attacker}<br>
+  <strong>به چه کسی حمله شد؟</strong>: ${e.target}<br>
+  <strong>کدام اتحاد</strong>: ${e.alliance}<br>
+  <small>${e.zeit}</small><br>
+  <img src="${e.bild}" alt="Attack Image"><br>
+
+  <button class="btn-share" onclick="shareEntry('${attackLink}', \`${shareText}\`)">
+    📤 اشتراک‌گذاری
+  </button>
+
+  <button class="btn-link" onclick="copyLink('${attackLink}')">
+    🔗 کپی لینک
+  </button>
+`;
+
+
+        if (isAdmin) html += `<button class="btn-red" onclick="deleteEntry('${e.key}')">حذف</button>`;
+
+        html += `</div>`;
+        inhalt.innerHTML += html;
       }
     });
-    if(!found) inhalt.innerHTML+="<p>داده‌ای موجود نیست</p>";
+
+    if (!found) inhalt.innerHTML += "<p>داده‌ای موجود نیست</p>";
   });
 }
+
 
 // Löschen
 function deleteEntry(key){
@@ -335,21 +382,33 @@ function showNotesIfVisible(){
     if(note.from<=nowISO && nowISO<=note.to){ notesDisplayDiv.style.display="block"; notesDisplayDiv.textContent=note.text;}
     else{ notesDisplayDiv.style.display="none";}
   });
+}function shareEntry(link, text) {
+  if (navigator.share) {
+    navigator.share({
+      title: 'Attack Report',
+      text: text,
+      url: link
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(link);
+    alert("لینک کپی شد!");
+  }
 }
+
+function copyLink(link) {
+  navigator.clipboard.writeText(link)
+    .then(() => alert("✅ لینک کپی شد"))
+    .catch(() => prompt("لینک را کپی کنید:", link));
+}
+
+
 
 // Start
 window.onload=()=>{ renderSectionButtons(); renderMenuButtons(); showNotesIfVisible(); setInterval(showNotesIfVisible,60000); }
 </script>
 
-  <button onclick="window.location.href='KushanInformation.html'">
-  Kushan Information
-</button>
-
-<button onclick="window.location.href='KushanSoliderTraining.html'">
-  Kushan Train
-</button>
-
-  
+<button onclick="window.location.href='kushan/KushanInforamtion.html'">KushanInforamtion</button>
+<button onclick="window.location.href='Kushan/KushanSoliderTraining.html'"> Kushan Train
 </button>
 
 </body>
