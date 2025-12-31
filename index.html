@@ -1,4 +1,3 @@
-
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
@@ -82,12 +81,54 @@
     background: #3A3A3A;
     box-shadow: 0 3px 6px rgba(0,0,0,0.5);
   }
+   body {
+    background-color: #2B2B2B;  /* dunkler Hintergrund */
+    color: #EAEAEA;             /* heller Text */
+    font-family: 'Tahoma', 'Arial', sans-serif;
+    direction: rtl;             /* Rechts-nach-Links */
+    margin: 40px auto;
+    max-width: 700px;
+    padding: 20px;
+    line-height: 1.6;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #444, #222);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+  }
+  p {
+    font-size: 1.15rem;
+    background-color: #3A3A3A;
+    padding: 20px 25px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    text-align: justify;
+  }
+  p strong {
+    color: #FFD700;  /* goldgelb für Hervorhebungen */
+  }
+  p em {
+    color: #8AC6D1;  /* hellblau für Betonungen */
+    font-style: normal;
+  }
 </style>
 </head>
 <body>
 
 <h1>🏰 امپراتوری کوشان</h1>
-
+ <hr>
+ <p>
+    درباره وب‌سایت
+<br>
+این مینی وب‌سایت توسط حمید علیزاده و صرفاً برای تفریح ساخته شده است. هیچ‌گونه ادعایی برای آن وجود ندارد و امیدوارم بتواند به اعضای کوشان کمک کند. این وب‌سایت هر روز در حال بهبود و توسعه می‌باشد.
+<br>
+برای استفاده از وب‌سایت، ابتدا روی گزینه «کوشان یک» کلیک کنید و سپس «افزودن داده جدید» را انتخاب نمایید.
+برای مشاهده داده‌های قدیمی، روی گزینه «مشاهده داده‌ها» کلیک کنید.
+<br>
+بخش‌های نامرئی برای ادمین در نظر گرفته شده‌اند که بیشتر جهت مدیریت وب‌سایت می‌باشند.
+<br>
+برای استفاده از «کوشان یک» به یک رمز عبور نیاز دارید که می‌توانید آن را از طریق تلگرام بنده دریافت کنید.
+ </p>
+ <hr>
+ <br><br>
 <div id="section-select"></div>
 <div id="menu"></div>
 
@@ -148,8 +189,8 @@ const noteFromInput = document.getElementById("note-from");
 const noteToInput = document.getElementById("note-to");
 const notesDisplayDiv = document.getElementById("notes-display");
 
-// Abteilungen
-let sections = { kushan1: { password: "12345" }, kushan2: { password: null } };
+// Abteilungen (nur kushan1)
+let sections = { kushan1: { password: "12345" } };
 
 // Render Abteilungen
 function renderSectionButtons() {
@@ -299,5 +340,10 @@ function showNotesIfVisible(){
 // Start
 window.onload=()=>{ renderSectionButtons(); renderMenuButtons(); showNotesIfVisible(); setInterval(showNotesIfVisible,60000); }
 </script>
+
+<button onclick="window.location.href='kushan/KushanInforamtion.html'">KushanInforamtion</button>
+<button onclick="window.location.href='Kushan/KushanSoliderTraining.html'"> Kushan Train
+</button>
+
 </body>
 </html>
