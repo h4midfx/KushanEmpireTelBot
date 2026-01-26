@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>حسابداری شخصی</title>
+
+<style>
+body{
+  font-family: Tahoma;
+  direction: rtl;
+  background:#f2f2f2;
+  padding:20px;
+}
+.box{
+  max-width:420px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+}
+input, select, button{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+}
+button{
+  background:#4CAF50;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+.income{color:green}
+.expense{color:red}
+li{margin:4px 0}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>💶 حسابداری شخصی</h2>
+
+  <input id="title" placeholder="عنوان">
+  <input id="amount" type="number" step="0.01" placeholder="مبلغ (€)">
+  
+  <select id="type">
+    <option value="income">درآمد</option>
+    <option value="expense">هزینه</option>
+  </select>
+
+  <button onclick="addItem()">ثبت</button>
+
+  <hr>
+
+  <ul id="list"></ul>
+
+  <h3>جمع کل: <span id="total">0</span> €</h3>
+</div>
+
+<script>
+let items = JSON.parse(localStorage.getItem("items")) || [];
+
+function addItem(){
+  const title = document.getElementById("title").value;
+  const amount = Number(document.getElementById("amount").value);
+  const type = document.getElementById("type").value;
+
+  if(!title || !amount) return;
+
+  items.push({ title, amount, type });
+  localStorage.setItem("items", JSON.stringify(items));
+
+  document.getElementById("title").value = "";
+  document.getElementById("amount").value = "";
+
+  render();
+}
+
+function render(){
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  let total = 0;
+
+  items.forEach(item => {
+    const li = document.createElement("li");
+    li.className = item.type;
+    li.textContent = ${item.title} - ${item.amount} €;
+    list.appendChild(li);
+
+    total += (item.type === "income")
+      ? item.amount
+      : -item.amount;
+  });
+
+  document.getElementById("total").textContent = total.toFixed(2);
+}
+
+render();
+</script>
+
+</body>
+</html>
